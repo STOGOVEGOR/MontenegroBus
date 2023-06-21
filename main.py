@@ -238,42 +238,6 @@ def dialogue(call):
   bot.send_message(call.message.chat.id, text=msg_tmplt)
   mainmenu(call.message)
   
-  
-  # if call.data == 'howstrong':
-  #   today_entry(user, cur_date)
-  #   db[user][cur_date]['headache'] = 1
-  #   howstrong(call.message)
-  # if call.data == 'nottoday':
-  #   today_entry(user, cur_date)
-  #   bot.send_message(call.message.chat.id,
-  #                    text='What do we say to the God of Death? Not today!')
-  #   howsleep(call.message)
-  # if 'pain' in call.data:
-  #   x = ''.join(i for i in call.data if i.isdigit())
-  #   db[user][cur_date]['pain_level'] = int(x)
-  #   usepills(call.message)
-  # if 'pills' in call.data:
-  #   x = ''.join(i for i in call.data if i.isdigit())
-  #   db[user][cur_date]['pills'] = int(x)
-  #   howsleep(call.message)
-  # if 'sleep' in call.data:
-  #   x = ''.join(i for i in call.data if i.isdigit())
-  #   db[user][cur_date]['sleep'] = int(x)
-  #   bot.send_message(call.message.chat.id, text='Done!')
-  #   mainmenu(call.message)
-  # if call.data == 'weekstat':
-  #   statistic(call.message, user, period=7)
-  # if call.data == 'monthstat':
-  #   statistic(call.message, user, period=30)
-  # if call.data == 'stopbot':
-  #   on_off(call.message, 0)
-  # if call.data == 'settime':
-  #   settimer(call.message)
-  # if 'timer' in call.data:
-  #   x = ''.join(i for i in call.data if i.isdigit())
-  #   if bot_enabled == 1:
-  #     on_off(call.message, 2)
-  #   set_timer_for_bot(call.message, set_time=x)
 
 
 keep_alive()  #load flask-server
