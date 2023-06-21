@@ -243,9 +243,9 @@ def mainmenu(message):
 def dialogue(call):
   if call.data == 'new_call':
     lets_start(call.message)
-  if call.data == 'Bijela':
+  elif call.data == 'Bijela':
     Bijela(call.message)
-  if call.data == 'Baosici':
+  elif call.data == 'Baosici':
     Baosici(call.message)
   else:
     msg_tmplt = 0
@@ -263,6 +263,7 @@ def dialogue(call):
       bus1toigalo_msg = f'🚌1️⃣:  {",  ".join(bus1toigalo)}\n'
     else:
       bus1toigalo_msg = 'no data'
+    
     bus1toferry = when_next(call.data, 'Bus1', 'Ferry')
     if bus1toferry:
       bus1toferry_msg = f'🚌1️⃣:  {",  ".join(bus1toferry)}\n'
