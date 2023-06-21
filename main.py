@@ -11,6 +11,7 @@ from datetime import date, timedelta, datetime, time, timezone
 from replit import db
 
 API_KEY = os.environ['MBUS_BOT_API_KEY']
+GOOGLE_MAP = 'https://www.google.com/maps/d/u/0/viewer?mid=1JXSDgb3Ym2k8YeZgN9gyyeUnSHY&ll=42.45906691231995%2C18.51595797876319&z=15'
 bot = telebot.TeleBot(API_KEY)
 bot_enabled = 1
 delay = 10
@@ -32,10 +33,10 @@ BUSBASE = {
     'Djenovici': [18,30],
     'Kumbor': [20,26],
     'Zelenika': [22,22],
-    'Meljine': [25,19],
-    'Savina': [28,16],
-    'Citadel': [29,14],
-    'Centar': [30,12],
+    'Meljine': [25,18],
+    'Savina': [28,15],
+    'Citadel': [29,13],
+    'Centar': [30,11],
     'Semafor': [32,10],
     'IgaloVojvodina': [34,8],
     'IgaloPochta': [36,6],
@@ -45,12 +46,12 @@ BUSBASE = {
   'Bus2':{
     'Meljine': [19,'end'],
     'Savina': [21,15],
-    'Citadel': [29,15],
-    'Centar': [23,12],
+    'Citadel': [22,13],
+    'Centar': [23,11],
     'Semafor': [25,10],
-    'IgaloVojvodina': [34,7],
-    'IgaloPochta': [28,7],
-    'IgaloInstitut': [31,3],
+    'IgaloVojvodina': [26,8],
+    'IgaloPochta': [28,6],
+    'IgaloInstitut': [30,3],
     'HDLVOLI': ['end',0]
   }
 }
@@ -66,12 +67,6 @@ def get_current_time() -> datetime:
     delta = timedelta(hours=2, minutes=0)
     and_now = datetime.now(timezone.utc) + delta
     return and_now
-
-# unaware = datetime.datetime(2011, 8, 15, 8, 15, 12, 0)
-# aware = datetime.datetime(2011, 8, 15, 8, 15, 12, 0, pytz.UTC)
-
-# now_aware = pytz.utc.localize(unaware)
-# assert aware == now_aware
 
 
 def when_next(bus_stop, bus_num, direction):
@@ -166,6 +161,8 @@ def send_welcome(message):
 def lets_start(message):
   keyboard = telebot.types.InlineKeyboardMarkup()
   keyboard.row(
+    telebot.types.InlineKeyboardButton('Свериться с картой:', url=GOOGLE_MAP))
+  keyboard.row(
     telebot.types.InlineKeyboardButton('KAMENARI Ferry ⛴️', callback_data='Kamenari'))
   keyboard.row(
     telebot.types.InlineKeyboardButton('Bijela', callback_data='Bijela'),
@@ -176,11 +173,11 @@ def lets_start(message):
     telebot.types.InlineKeyboardButton('Zelenika', callback_data='Zelenika'),
     telebot.types.InlineKeyboardButton('Meljine', callback_data='Meljine'))    
   keyboard.row(
-    telebot.types.InlineKeyboardButton('Savina', callback_data='Savina'),
-    telebot.types.InlineKeyboardButton('Centar', callback_data='Centar'),
-    telebot.types.InlineKeyboardButton('Semafor', callback_data='Semafor'))
+    telebot.types.InlineKeyboardButton('HN Savina', callback_data='Savina'),
+    telebot.types.InlineKeyboardButton('HN Centar', callback_data='Centar'),
+    telebot.types.InlineKeyboardButton('HN Semafor', callback_data='Semafor'))
   keyboard.row(
-    telebot.types.InlineKeyboardButton(text=f'Igalo\nVojvodn',
+    telebot.types.InlineKeyboardButton(text=f'Igalo Vojvodn',
                                        callback_data='IgaloVojvodina'),
     telebot.types.InlineKeyboardButton('Igalo Park',
                                        callback_data='IgaloPochta'),
@@ -220,9 +217,10 @@ def Baosici(message):
 
 @bot.message_handler(commands=['menu'])
 def mainmenu(message):
-  keyboard = telebot.types.InlineKeyboardMarkup()
-  keyboard.row(
-    telebot.types.InlineKeyboardButton('Выберите местоположение:', callback_data='new_call'))
+  keyboard = telebot.types.InlineKeyboardMarkup(row_width=1)
+  btn1 = telebot.types.InlineKeyboardButton('Выберите ваше местоположение:', callback_data='new_call')
+  btn2 = telebot.types.InlineKeyboardButton('Посмотрите карту:', url=GOOGLE_MAP)
+  keyboard.add(btn1, btn2)
   bot.send_message(message.chat.id,
                    'Новый запрос?',
                    reply_markup=keyboard)
@@ -251,12 +249,7 @@ def dialogue(call):
     msg_tmplt = 0
     user = call.from_user.username
     cur_time = get_current_time()
-    cur_hour = int(cur_time.strftime("%H")+'00')
-    if cur_hour == 0:
-      cur_hour = 2400
-    cur_minute = cur_time.strftime("%M")
     day_of_week = cur_time.weekday()
-    print('time now is', cur_time)
     
     bus1toigalo = when_next(call.data, 'Bus1', 'Igalo')
     if bus1toigalo:
