@@ -16,7 +16,8 @@ bot = telebot.TeleBot(API_KEY)
 bot_enabled = 1
 delay = 10
 
-# [1,2] - 1 to HDL (Igalo), 2 to ferry (or Meljino)
+# correction by direction in minutes
+# [0,1] - 0 to HDL (Igalo), 1 to ferry (or Meljino)
 BUSBASE = {
   'Bus1': {
     'Kamenari': [0, 'end'],
@@ -93,7 +94,8 @@ def when_next(bus_stop, bus_num, direction):
         return False
 
     # if bus_num == 'Bus2' and day_of_week == 6:
-    #     print('no bus today')
+    #     print('no bus for today')
+  # set a schedule
     if bus_num == 'Bus2':
         BUSSCHEDULE = BUS2_CIRCLE
     if bus_num == 'Bus1':
@@ -107,6 +109,7 @@ def when_next(bus_stop, bus_num, direction):
                 BUSSCHEDULE = BUS1_KAMEN
             else:
                 BUSSCHEDULE = BUS1_KAMEN_SUN
+# get a list of nearest bus starting time
     cur_t = 0
     for t in BUSSCHEDULE:
         if t >= cur_hour:
@@ -118,6 +121,7 @@ def when_next(bus_stop, bus_num, direction):
             time_start_list = [str(BUSSCHEDULE[i]) for i in range(-5, 0)]
             break
     # print(bus_num, direction, time_start_list)
+# calculate an arriwal time
     for i in time_start_list:
         hour = int(i[:-2])
         if hour == 24:
@@ -125,8 +129,6 @@ def when_next(bus_stop, bus_num, direction):
         minute = "{:02d}".format(int(i[-2:]))
         i = time(hour=hour, minute=int(minute))
         arrive_on_busstop_full = datetime.combine(date.today(), i, pytz.UTC) + timedelta(minutes=correction)
-        # pytz.utc.localize(arrive_on_busstop_full)
-        # pytz.utc.localize(cur_time)
         if arrive_on_busstop_full.time().strftime('%H') == '00':
             arrive_on_busstop_full = arrive_on_busstop_full + timedelta(days=1)
         if cur_hour >= 21 and arrive_on_busstop_full.time().strftime('%H') in ['05', '06', '07', '08', '09']:
@@ -224,16 +226,6 @@ def mainmenu(message):
   bot.send_message(message.chat.id,
                    'Новый запрос?',
                    reply_markup=keyboard)
-
-#   keyboard2 = telebot.types.InlineKeyboardMarkup()
-#   keyboard2.row(
-#     telebot.types.InlineKeyboardButton('STOP', callback_data='stopbot'),
-#     telebot.types.InlineKeyboardButton('START & SET TIME',
-#                                        callback_data='settime'))
-#   bot.send_message(message.chat.id,
-#                    '==== Mission control center: ====',
-#                    reply_markup=keyboard2)
-
 
 
 # ========== reply to buttons ============
